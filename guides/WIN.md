@@ -236,10 +236,53 @@ Install **fnm** for *Node.js version management*:
 curl -fsSL https://fnm.vercel.app/install | bash
 ```
 
-Enable **fnm** integration in **Zsh**:
+Remove the global directory from *PATH*:
 
 ```bash
-echo 'eval "$(fnm env --use-on-cd --shell zsh)"' >> ~/.zshrc
+sed -i '/^export PATH=~\/.npm-global\/bin:\$PATH$/ {N;/\n$/d;}' ~/.zshrc
+```
+
+Add a **Zsh** hook that automatically uses the **Node.js** version from a project's *.node-version* file, or reverts to the system version if no file exists:
+
+```bash
+cat << 'EOF' >> ~/.zshrc
+export NPM_GLOBAL_PATH="${HOME}/.npm-global"
+
+setup_node_hook() {
+  local current_dir="${PWD}"
+  local node_version_file=""
+
+  while [[ "${current_dir}" != "/" ]]; do
+    if [[ -f "${current_dir}/.node-version" ]]; then
+      node_version_file="${current_dir}/.node-version"
+      break
+    fi
+    current_dir="$(dirname "${current_dir}")"
+  done
+
+  path=("${(@)path:#${NPM_GLOBAL_PATH}/bin}")
+  path=("${(@)path:#/run/user/*/fnm_multishells/*}")
+  export PATH="${(j/:/)path}"
+  eval "$(fnm env)"
+
+  if [[ -n "${node_version_file}" ]]; then
+    echo "[setup node hook] .node-version file found at: ${node_version_file}"
+    fnm use --install-if-missing "$(cat "${node_version_file}")"
+    npm config delete prefix
+    eval "$(fnm env --shell zsh)"
+  else
+    export PATH="${NPM_GLOBAL_PATH}:${PATH}"
+    echo "[setup node hook] No .node-version found."
+    fnm use system
+    npm config set prefix "$NPM_GLOBAL_PATH"
+  fi
+}
+
+setup_node_hook
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd setup_node_hook
+EOF
 ```
 
 Apply changes by reloading the **Zsh** configuration file:
