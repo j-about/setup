@@ -271,10 +271,10 @@ setup_node_hook() {
     npm config delete prefix
     eval "$(fnm env --shell zsh)"
   else
-    export PATH="${NPM_GLOBAL_PATH}:${PATH}"
     echo "[setup node hook] No .node-version found."
     fnm use system
     npm config set prefix "$NPM_GLOBAL_PATH"
+    export PATH="${NPM_GLOBAL_PATH}/bin:${PATH}"
   fi
 }
 
