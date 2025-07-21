@@ -14,6 +14,7 @@ Setup guide for Windows with **WSL2**.
 - [Node.js Version Manager (fnm)](#nodejs-version-manager-fnm)
 - [Visual Studio Code Extensions](#visual-studio-code-extensions)
 - [Artificial Intelligence](#artificial-intelligence)
+- [DevOps Tools](#devops-tools)
 
 ## Prerequisites
 
@@ -324,6 +325,7 @@ Install **Claude Code**:
 
 ```bash
 npm install -g @anthropic-ai/claude-code
+npm install -g ccusage
 ```
 
 Initialize **Claude Code** configuration:
@@ -437,4 +439,22 @@ Install the **Google Gemini Code Assist** extension for **Visual Studio Code**:
 
 ```bash
 code --install-extension Google.geminicodeassist
+```
+
+## DevOps Tools
+
+### Ansible Installation
+
+Configure the **Ubuntu codename** and add the official **Ansible PPA** repository:
+
+```bash
+UBUNTU_CODENAME=jammy
+wget -O- "https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=get&search=0x6125E2A8C77F2818FB7BD15B93C4A3FD7BB9C367" | sudo gpg --dearmour -o /usr/share/keyrings/ansible-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/ansible-archive-keyring.gpg] http://ppa.launchpad.net/ansible/ansible/ubuntu $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/ansible.list
+sudo apt update
+```
+
+Install **Ansible**:
+```bash
+sudo apt install ansible
 ```
