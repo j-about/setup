@@ -62,7 +62,7 @@ Add the official **GitHub CLI repository** to **APT**:
 Install essential command-line tools including **Zsh** shell:
 
 ```bash
-sudo apt install -y curl git gh jq unzip zsh tree
+sudo apt install -y curl git gh jq rsync tree unzip zsh
 ```
 
 ### Oh My Zsh Installation & Configuration
